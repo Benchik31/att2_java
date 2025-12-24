@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}">
+</head>
+<body>
+<div class="page">
+    <header class="hero compact">
+        <div>
+            <p class="eyebrow">Menu Studio</p>
+            <h1>Welcome back</h1>
+            <p class="lead">Sign in to view the menu dashboard.</p>
+        </div>
+        <div class="hero-card small">
+            <a class="btn ghost" th:href="@{/register}">Create account</a>
+        </div>
+    </header>
+
+    <section class="panel form-panel narrow">
+        <div class="panel-title">
+            <h2>Login</h2>
+            <p>Use your username and password.</p>
+        </div>
+
+        <div class="alert" th:if="${param.error}">Invalid username or password.</div>
+        <div class="alert success" th:if="${param.logout}">You have logged out.</div>
+        <div class="alert success" th:if="${param.registered}">Account created. Please log in.</div>
+
+        <form class="form-grid single" th:action="@{/login}" method="post">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" type="text" name="username" placeholder="yourname" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" type="password" name="password" placeholder="******" required>
+            </div>
+            <div class="field field-action">
+                <button class="btn primary" type="submit">Sign in</button>
+            </div>
+        </form>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}">
+</head>
+<body>
+<div class="page">
+    <header class="hero compact">
+        <div>
+            <p class="eyebrow">Menu Studio</p>
+            <h1>Create an account</h1>
+            <p class="lead">Register to access the menu dashboard.</p>
+        </div>
+        <div class="hero-card small">
+            <a class="btn ghost" th:href="@{/login}">Back to login</a>
+        </div>
+    </header>
+
+    <section class="panel form-panel narrow">
+        <div class="panel-title">
+            <h2>Registration</h2>
+            <p>New accounts are created with view-only access.</p>
+        </div>
+
+        <form class="form-grid single" th:action="@{/register}" th:object="${registrationForm}" method="post">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" type="text" th:field="*{username}" placeholder="yourname">
+                <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</p>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" type="password" th:field="*{password}" placeholder="******">
+                <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</p>
+            </div>
+            <div class="field">
+                <label for="confirmPassword">Confirm password</label>
+                <input id="confirmPassword" type="password" th:field="*{confirmPassword}" placeholder="******">
+                <p class="field-error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Confirm error</p>
+            </div>
+            <div class="field field-action">
+                <button class="btn primary" type="submit">Register</button>
+            </div>
+        </form>
+    </section>
+</div>
+</body>
+</html>

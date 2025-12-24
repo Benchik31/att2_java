@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Studio</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}">
+</head>
+<body>
+<div class="page">
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Group 26 theme</p>
+            <h1>Menu Studio</h1>
+            <p class="lead">Create, curate, and refine your dish catalog.</p>
+        </div>
+        <div class="hero-card">
+            <div class="hero-metric">
+                <span class="metric-label">Total items</span>
+                <span class="metric-value" th:text="${items.size()}">0</span>
+            </div>
+            <div class="hero-metric">
+                <span class="metric-label">Storage</span>
+                <span class="metric-value">H2</span>
+            </div>
+            <div class="hero-actions" sec:authorize="isAuthenticated()">
+                <span class="user-badge" th:text="${#authentication.name}">user</span>
+                <form class="inline" th:action="@{/logout}" method="post">
+                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button class="btn ghost" type="submit">Logout</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <section class="panel form-panel" sec:authorize="hasRole('ADMIN')">
+        <div class="panel-title">
+            <h2>Add a new dish</h2>
+            <p>Keep the menu fresh with an original entry.</p>
+        </div>
+        <form class="form-grid" th:action="@{/items}" th:object="${menuItem}" method="post">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="field">
+                <label for="dishName">Dish name</label>
+                <input id="dishName" type="text" th:field="*{dishName}" placeholder="Truffle risotto">
+                <p class="field-error" th:if="${#fields.hasErrors('dishName')}" th:errors="*{dishName}">Dish name error</p>
+            </div>
+            <div class="field">
+                <label for="category">Category</label>
+                <input id="category" type="text" th:field="*{category}" placeholder="Main">
+                <p class="field-error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">Category error</p>
+            </div>
+            <div class="field">
+                <label for="price">Price</label>
+                <input id="price" type="number" step="0.01" min="0.01" th:field="*{price}" placeholder="12.50">
+                <p class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price error</p>
+            </div>
+            <div class="field field-action">
+                <button class="btn primary" type="submit">Add to menu</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel info-panel" sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
+        <div class="panel-title">
+            <h2>View-only access</h2>
+            <p>Your account can browse the menu but cannot make changes.</p>
+        </div>
+    </section>
+
+    <section class="panel table-panel">
+        <div class="panel-title">
+            <h2>Menu items</h2>
+            <p>Browse the current dish list below.</p>
+        </div>
+        <div class="table-wrap">
+            <table class="menu-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Dish</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th class="actions" sec:authorize="hasRole('ADMIN')">Actions</th>
+                    <th class="actions" sec:authorize="!hasRole('ADMIN')">Access</th>
+                </tr>
+                </thead>
+                <tbody th:if="${#lists.isEmpty(items)}">
+                <tr>
+                    <td class="empty" colspan="5">No items yet. Add the first dish above.</td>
+                </tr>
+                </tbody>
+                <tbody th:unless="${#lists.isEmpty(items)}">
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.id}">1</td>
+                    <td th:text="${item.dishName}">Dish</td>
+                    <td>
+                        <span class="tag" th:text="${item.category}">Category</span>
+                    </td>
+                    <td th:text="${item.price}">0.00</td>
+                    <td class="actions" sec:authorize="hasRole('ADMIN')">
+                        <a class="btn ghost" th:href="@{/items/{id}/edit(id=${item.id})}">Edit</a>
+                        <form th:action="@{/items/{id}/delete(id=${item.id})}" method="post">
+                            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button class="btn danger" type="submit" onclick="return confirm('Delete this item?');">Delete</button>
+                        </form>
+                    </td>
+                    <td class="actions muted" sec:authorize="!hasRole('ADMIN')">View only</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+</body>
+</html>
